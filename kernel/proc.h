@@ -97,6 +97,9 @@ struct proc {
   // these are private to the process, so p->lock need not be held.
   uint64 kstack;               // Virtual address of kernel stack
   uint64 sz;                   // Size of process memory (bytes)
+  uint64 cputime;	       // Cputime of process (uint does not hold neg nums
+                               // in turn, they can hold twice as many pos nums as int)
+                               // HW2
   pagetable_t pagetable;       // User page table
   struct trapframe *trapframe; // data page for trampoline.S
   struct context context;      // swtch() here to run process
