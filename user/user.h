@@ -25,6 +25,8 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int getprocs(struct pstat*);
+int time1(int argc, char **argv);
+int matmul(int argc, char **argv);
 
 // ulib.c
 int stat(const char*, struct stat*);
