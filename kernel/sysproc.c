@@ -38,6 +38,20 @@ sys_wait(void)
   return wait(p);
 }
 
+// HW 2: Task 3 -> Implement sys_wait2
+// Return child process status AND rusage w/ rusage being only cputime
+uint64
+sys_wait2(void)
+{
+  uint64 p;
+  uint64 ru;	// rusage
+  // &p 0 for first arg, &ru 1 for second arg
+  // Checks if valid memory addrs
+  if(argaddr(0, &p) < 0 || argaddr(1, &ru) < 0)
+    return -1;
+  return wait2(p, ru);	// return status and rusage
+}
+
 uint64
 sys_sbrk(void)
 {

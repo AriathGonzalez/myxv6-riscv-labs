@@ -18,6 +18,7 @@ sub entry {
 entry("fork");
 entry("exit");
 entry("wait");
+entry("wait2");	# HW 2: Task 3 -> Add entry for wait2
 entry("pipe");
 entry("read");
 entry("write");

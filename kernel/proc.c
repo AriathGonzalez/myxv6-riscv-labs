@@ -429,6 +429,72 @@ wait(uint64 addr)
   }
 }
 
+// HW 2: Task 3 -> Implement wait2
+// Wait for a child process to exit and return its pid.
+// Return -1 if this process has no children.
+// addr reps the mem addr in user space where f() should cp exit status of child process
+// addr2 reps the mem addr in user space where f() should cp cputime consumed by child process
+// if addr2 is 0, user does not want to receive cputime
+int
+wait2(uint64 addr, uint64 addr2)
+{
+  struct proc *np;
+  int havekids, pid;
+  struct proc *p = myproc();
+  struct rusage ru;	// HW 2
+
+  acquire(&wait_lock);
+
+  for(;;){
+    // Scan through table looking for exited children.
+    havekids = 0;
+    for(np = proc; np < &proc[NPROC]; np++){
+      if(np->parent == p){
+        // make sure the child isn't still in exit() or swtch().
+        acquire(&np->lock);
+
+        havekids = 1;
+        if(np->state == ZOMBIE){
+          // Found one.
+          pid = np->pid;
+          ru.cputime = np->cputime;	// HW 2
+          				// Assigns value of 'cputime' filed of the 'struct proc'
+          				// represented by 'np' to the 'cputime' field of the
+          				// 'struct rusage' represented by 'ru'
+          if(addr != 0 && copyout(p->pagetable, addr, (char *)&np->xstate,
+                                  sizeof(np->xstate)) < 0) {
+            release(&np->lock);
+            release(&wait_lock);
+            return -1;
+          }
+          // HW 2: Task 3
+          // Check if valid memory addr and if copyout() success
+          // If failure, release locks and return -1 to indicate error.
+          if (addr2 != 0 && copyout(p->pagetable, addr2, (char *)&ru, sizeof(ru)) < 0) {
+          	release(&np->lock);
+          	release(&wait_lock);
+          	return -1;
+          }
+          freeproc(np);
+          release(&np->lock);
+          release(&wait_lock);
+          return pid;
+        }
+        release(&np->lock);
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!havekids || p->killed){
+      release(&wait_lock);
+      return -1;
+    }
+    
+    // Wait for a child to exit.
+    sleep(p, &wait_lock);  //DOC: wait-sleep
+  }
+}
+
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
 // Scheduler never returns.  It loops, doing:
