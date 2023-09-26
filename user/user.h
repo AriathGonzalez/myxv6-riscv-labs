@@ -1,6 +1,7 @@
 struct stat;
 struct rtcdate;
 struct pstat;
+struct rusage;	// HW 2: Task 3
 
 // system calls
 int fork(void);
