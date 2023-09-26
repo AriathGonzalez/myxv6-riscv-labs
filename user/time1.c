@@ -25,7 +25,7 @@ Note for each step:
 #include "kernel/types.h"
 #include "user/user.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
 	// Error: Did not enter program to be timed
 	if (argc < 2) {
 		fprintf(2, "Usage: time1 cmds...\n");
@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
 		The child must run first (matmul)
 		The parent runs second (time1)
 		*/
-		int status;
-		wait(&status);	// Wait for child to terminate
+		
+		wait(0);	// Wait for child to terminate
 		
 		int endTime = uptime();
 		int elapsedTime = endTime - startTime;
