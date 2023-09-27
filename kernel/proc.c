@@ -6,6 +6,7 @@
 #include "proc.h"
 #include "pstat.h"
 #include "defs.h"
+#include "proc.c" 
 
 struct cpu cpus[NCPU];
 
