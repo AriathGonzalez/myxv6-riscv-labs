@@ -6,7 +6,6 @@
 #include "proc.h"
 #include "pstat.h"
 #include "defs.h"
-#include "proc.c" 
 
 struct cpu cpus[NCPU];
 
@@ -449,17 +448,24 @@ wait2(uint64 addr, uint64 addr2)
   for(;;){
     // Scan through table looking for exited children.
     havekids = 0;
+    // Remember, you call wait in the parent, so you're going to every 
+    // process (np) in the process table to find the child of the current
+    // process (p)
     for(np = proc; np < &proc[NPROC]; np++){
       if(np->parent == p){
         // make sure the child isn't still in exit() or swtch().
         acquire(&np->lock);
 
         havekids = 1;
+        // If a process is in a zombie state, it means that it's a process that
+        // has completed execution (via the exit sys call) but still has an entry
+        // in the process table.
         if(np->state == ZOMBIE){
           // Found one.
+          // Get the pid and cputime of exited child process
           pid = np->pid;
           ru.cputime = np->cputime;	// HW 2
-          				// Assigns value of 'cputime' filed of the 'struct proc'
+          				// Assigns value of 'cputime' field of the 'struct proc'
           				// represented by 'np' to the 'cputime' field of the
           				// 'struct rusage' represented by 'ru'
           if(addr != 0 && copyout(p->pagetable, addr, (char *)&np->xstate,

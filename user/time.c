@@ -34,7 +34,9 @@ int main(int argc, char *argv[]) {
 		// Spends time waiting for resources or other events that do not consume CPU time
 		int endTime = uptime();
 		int elapsedTime = endTime - startTime;
-		fprintf(1, "elapsed time: %d ticks, cpu time: %d ticks, %d% CPU\n", elapsedTime, ru.cputime, (ru.cputime/elapsedTime) * 100);
+		int cputime = ru.cputime;
+		int cpuUsage = cputime * 100 / elapsedTime;
+		fprintf(1, "elapsed time: %d ticks, cpu time: %d ticks, %d% CPU\n", elapsedTime, cputime, cpuUsage);
 	}
 	
 	exit(0);
