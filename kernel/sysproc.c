@@ -43,10 +43,14 @@ sys_wait(void)
 uint64
 sys_wait2(void)
 {
+  // uint64 in the kernel is a pointer, no * here
   uint64 p;
   uint64 ru;	// rusage
   // &p 0 for first arg, &ru 1 for second arg
   // Checks if valid memory addrs
+  
+  // 0 means its in a0, &p means assume that it's in this addr (go get me whatever value is in a0) and put them in p and ru
+  // If less than 0, then user put an invalid addr
   if(argaddr(0, &p) < 0 || argaddr(1, &ru) < 0)
     return -1;
   return wait2(p, ru);	// return status and rusage

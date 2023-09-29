@@ -102,7 +102,7 @@ extern uint64 sys_sbrk(void);
 extern uint64 sys_sleep(void);
 extern uint64 sys_unlink(void);
 extern uint64 sys_wait(void);
-extern uint64 sys_wait2(void);	// HW 2: Task 3 -> Add wait2 sys call info
+extern uint64 sys_wait2(void);	// HW 2: Task 3 -> Add wait2 sys call info; Actual routine that gets called when OS does the lookup
 extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_getprocs(void);

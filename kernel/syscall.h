@@ -21,4 +21,5 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 #define SYS_getprocs  22
+// Defining number for you system call (used in usys.pl)
 #define SYS_wait2  23

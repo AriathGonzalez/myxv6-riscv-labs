@@ -18,7 +18,7 @@ sub entry {
 entry("fork");
 entry("exit");
 entry("wait");
-entry("wait2");	# HW 2: Task 3 -> Add entry for wait2
+entry("wait2");	# HW 2: Task 3 -> Add entry for wait2; To generate assembly language code, Will generate a wrapper for wait2 call, when you make system call in /user, this is where it goes
 entry("pipe");
 entry("read");
 entry("write");

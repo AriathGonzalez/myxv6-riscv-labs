@@ -435,6 +435,7 @@ wait(uint64 addr)
 // addr reps the mem addr in user space where f() should cp exit status of child process
 // addr2 reps the mem addr in user space where f() should cp cputime consumed by child process
 // if addr2 is 0, user does not want to receive cputime
+// Helper function for sys_wait2() in sysproc.c
 int
 wait2(uint64 addr, uint64 addr2)
 {
