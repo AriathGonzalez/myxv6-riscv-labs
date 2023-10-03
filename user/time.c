@@ -1,4 +1,4 @@
-#include "kernel/param.h"
+#include "kernel/param.h"	// This has to be included before pstat
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "user/user.h"
