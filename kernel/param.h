@@ -11,5 +11,7 @@
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       1000  // size of file system in blocks
 #define MAXPATH      128   // maximum file path name
-
+#define DEFAULTPRIORITY 0  // HW 3: Task 1, default scheduling priority
+#define MAXPRIORITY 49     // Maximum process priority
+#define MAXEFFPRIORITY 99  // Maximum effective process priority
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };

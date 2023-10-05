@@ -23,3 +23,6 @@
 #define SYS_getprocs  22
 // Defining number for you system call (used in usys.pl)
 #define SYS_wait2  23
+// HW 3: Task 1
+#define SYS_getpriority 24
+#define SYS_setpriority 25

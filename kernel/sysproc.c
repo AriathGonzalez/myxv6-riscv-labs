@@ -125,3 +125,24 @@ sys_getprocs(void)
     return -1;
   return(procinfo(addr));
 }
+
+// HW 3: Task 1
+uint64
+sys_getpriority(void)
+{
+	return myproc()->priority;
+}
+
+uint64
+sys_setpriority(void)
+{
+	int priority;
+	
+	// Using argint instead of argadrr because expect argument to be a int instead of a pointer
+	if (argint(0, &priority) < 0)
+		return -1;
+	if ((priority < 0) || (priority > MAXPRIORITY))
+		return -1;
+	myproc()->priority = priority;
+	return 0;
+}

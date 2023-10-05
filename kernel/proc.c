@@ -121,7 +121,8 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->cputime = 0;	// Initialize cputime to 0 when process is created. (HW 2)
-
+  p->priority = DEFAULTPRIORITY;	// HW 3: Task 1 (Change this)
+  
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
     freeproc(p);
@@ -747,6 +748,9 @@ procinfo(uint64 addr)
     procinfo.pid = p->pid;
     procinfo.state = p->state;
     procinfo.size = p->sz;
+    // HW 3: Task 1
+    procinfo.priority = p->priority;
+    procinfo.cputime = p->cputime;
     if (p->parent)
       procinfo.ppid = (p->parent)->pid;
     else

@@ -38,3 +38,5 @@ entry("sbrk");
 entry("sleep");
 entry("uptime");
 entry("getprocs");
+entry("getpriority");	# HW 3: Task 1
+entry("setpriority");

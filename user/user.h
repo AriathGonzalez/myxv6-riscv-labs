@@ -29,6 +29,9 @@ int uptime(void);
 int getprocs(struct pstat*);
 int time1(int argc, char **argv);
 int matmul(int argc, char **argv);
+// HW 3: Task 1
+int getpriority(void);	
+int setpriority(int);	// maybe void for return
 
 // ulib.c
 int stat(const char*, struct stat*);

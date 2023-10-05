@@ -99,6 +99,7 @@ struct proc {
   uint64 sz;                   // Size of process memory (bytes)
   uint64 cputime;	       // Cputime of process (uint does not hold neg nums
                                // in turn, they can hold twice as many pos nums as int)
+  int priority;			// HW 3: Task 1
                                // HW2
   pagetable_t pagetable;       // User page table
   struct trapframe *trapframe; // data page for trampoline.S

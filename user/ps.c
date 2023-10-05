@@ -21,12 +21,19 @@ main(int argc, char **argv)
   if (nprocs < 0)
     exit(-1);
 
-  printf("pid\tstate\t\tsize\tppid\tname\n");
+  // HW 3: Task 1, included priority and cputime
+  printf("pid state    size   age  priority   cputime  ppid  name\n");
   for (i=0; i<nprocs; i++) {
     state = states[uproc[i].state];
-    printf("%d\t%s\t%l\t%d\t%s\n", uproc[i].pid, state,
-                   uproc[i].size, uproc[i].ppid, uproc[i].name);
-  }
+    //pstate = uproc[i].state;
+    //state = states[pstate];
+    //if (pstate == RUNNABLE)
+        //printf("%d   %s %l   %l         %d     %d      %d     %s\n", uproc[i].pid, state,
+                   //uproc[i].size, uptime()-uproc[i].readytime, uproc[i].priority, uproc[i].cputime, uproc[i].ppid, uproc[i].name);
+    //else
+    printf("%d   %s %l             %d     %d       %d     %s\n", uproc[i].pid, state,
+                   uproc[i].size, uproc[i].priority, uproc[i].cputime, uproc[i].ppid, uproc[i].name);
+   }
 
   exit(0);
 }
