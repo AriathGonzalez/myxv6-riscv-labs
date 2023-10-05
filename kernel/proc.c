@@ -246,6 +246,7 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+  p->readytime = sys_uptime();	// HW 3: Task 2
 
   release(&p->lock);
 }
@@ -316,6 +317,7 @@ fork(void)
 
   acquire(&np->lock);
   np->state = RUNNABLE;
+  np->readytime = sys_uptime();	// HW 3: Task 2
   release(&np->lock);
 
   return pid;
@@ -575,6 +577,7 @@ yield(void)
   struct proc *p = myproc();
   acquire(&p->lock);
   p->state = RUNNABLE;
+  p->readytime = sys_uptime();
   sched();
   release(&p->lock);
 }
@@ -643,6 +646,7 @@ wakeup(void *chan)
       acquire(&p->lock);
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
+        p->readytime = sys_uptime();	// HW 3: Task 2
       }
       release(&p->lock);
     }
@@ -664,6 +668,7 @@ kill(int pid)
       if(p->state == SLEEPING){
         // Wake process from sleep().
         p->state = RUNNABLE;
+        p->readytime = sys_uptime();
       }
       release(&p->lock);
       return 0;
