@@ -129,7 +129,6 @@ UPROGS=\
 	$U/_rm\
 	$U/_sh\
 	$U/_stressfs\
-	$U/_test\
 	$U/_time\
 	$U/_time1\
 	$U/_usertests\
@@ -137,6 +136,7 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 	$U/_sleep\
+	$U/_pexec\
 	$U/_ps\
 	$U/_pstree\
 	$U/_pstest\

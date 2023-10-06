@@ -14,4 +14,8 @@
 #define DEFAULTPRIORITY 0  // HW 3: Task 1, default scheduling priority
 #define MAXPRIORITY 49     // Maximum process priority
 #define MAXEFFPRIORITY 99  // Maximum effective process priority
+#define RR		0  // HW 3: Task 3, constant for round-robin scheduling
+#define PRIORITY	1  // const for priority scheduling
+#define SCHEDPOLICY	PRIORITY   // Scheduling policy
+
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };

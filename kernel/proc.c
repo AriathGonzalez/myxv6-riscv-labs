@@ -11,6 +11,8 @@ struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
 
+int schedPolicy = SCHEDPOLICY;	// HW 3: Task 3
+
 struct proc *initproc;
 
 int nextpid = 1;
@@ -292,7 +294,8 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-
+  np->prioriity = p->priority;	// HW 3: Task 3
+  
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
 
@@ -506,6 +509,35 @@ wait2(uint64 addr, uint64 addr2)
   }
 }
 
+// HW 3: Task 3
+struct proc *maxpriorityproc()
+{
+	struct proc *p, *maxproc;	// Pointers to processes
+	uint maxprio = 0;	// Initialize max effective priority
+	uint effprio;	// Effective priority of curr process
+	uint64 currTime = sys_uptime();
+	maxproc = 0;	// Initialize process pointer to NULL (no process found)
+	
+	for (p = proc; p < &proc[NPROC]; p++) {
+		acquire(&p->lock);
+		
+		if (p->state == RUNNABLE) {
+			effprio = p->priority + (currTime - p->readytime);
+			
+			// Ensure effective priority does not exceed max effective priority
+			if (effprio > MAXEFFPRIORITY)
+				effprio = MAXEFFPRIORITY;
+			// Compare effective priority and update 'maxproc' if higher priority found
+			if (effprio >= maxprio){
+				maxprio = effprio;
+				maxproc = p;
+			}
+		}
+		release(&p->lock);
+	}
+	return maxproc;
+}
+
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
 // Scheduler never returns.  It loops, doing:
@@ -523,22 +555,47 @@ scheduler(void)
   for(;;){
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
+    if (schedPolicy == RR) { 
+  	for(p = proc; p < &proc[NPROC]; p++) {
+      		acquire(&p->lock);
+      		if(p->state == RUNNABLE) {
+			// Switch to chosen process.  It is the process's job
+			// to release its lock and then reacquire it
+			// before jumping back to us.
+			p->state = RUNNING;
+			c->proc = p;
+			swtch(&c->context, &p->context);
 
-    for(p = proc; p < &proc[NPROC]; p++) {
-      acquire(&p->lock);
-      if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
+			// Process is done running for now.
+			// It should have changed its p->state before coming back.
+			c->proc = 0;
+      		}
+      		release(&p->lock);
+    	}  
+    }
+    // HW 3: Task 3, Scheduling Policy is priority
+    else {
+    	p = maxpriorityproc();	// Gets the process with the max effective priority (sum of base priority + how long it has been waiting)
+    	if (p) {	// Ensure that the process passed is not NULL
+    		for(p = proc; p < &proc[NPROC]; p++) {
+      			acquire(&p->lock);
+      			if(p->state == RUNNABLE) {
+				// Switch to chosen process.  It is the process's job
+				// to release its lock and then reacquire it
+				// before jumping back to us.
+				p->state = RUNNING;
+				c->proc = p;
+				swtch(&c->context, &p->context);
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-      }
-      release(&p->lock);
+				// Process is done running for now.
+				// It should have changed its p->state before coming back.
+        			c->proc = 0;
+      			}	
+      			release(&p->lock);
+    		}
+    	
+    	}
+    	
     }
   }
 }
@@ -753,9 +810,10 @@ procinfo(uint64 addr)
     procinfo.pid = p->pid;
     procinfo.state = p->state;
     procinfo.size = p->sz;
-    // HW 3: Task 1
-    procinfo.priority = p->priority;
+    // HW 3
+    procinfo.priority = p->priority;	// HW 3: Task 3
     procinfo.cputime = p->cputime;
+    procinfo.readytime = p->readytime;
     if (p->parent)
       procinfo.ppid = (p->parent)->pid;
     else

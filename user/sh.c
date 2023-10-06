@@ -164,6 +164,15 @@ main(void)
         fprintf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+    // HW 3: Extra credit
+    if (buf[0] == 'g' && buf[3] == 'p') {
+    	printf("%d\n", getpriority());
+    	continue;
+    }
+    if (buf[0] == 's' && buf[3] == 'p') {
+    	setpriority(atoi(buf + 12));
+    	continue;
+    }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait(0);

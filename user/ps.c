@@ -26,16 +26,17 @@ main(int argc, char **argv)
   printf("pid state    size   age  priority   cputime  ppid  name\n");
   for (i=0; i<nprocs; i++) {
     // HW 3: Task 2
-    pstate = uproc[i].state;	
-    state = states[pstate];	
-    // HW 3: Task 2
+    pstate = uproc[i].state;
+    state = states[pstate];
     if (pstate == RUNNABLE)
-    	printf("%d   %s %l   %l         %d     %d      %d     %s\n", uproc[i].pid, state,
+        printf("%d   %s %l   %l         %d     %d      %d     %s\n", uproc[i].pid, state,
                    uproc[i].size, uptime()-uproc[i].readytime, uproc[i].priority, uproc[i].cputime, uproc[i].ppid, uproc[i].name);
     else
-    	printf("%d   %s %l             %d     %d       %d     %s\n", uproc[i].pid, state,
+        printf("%d   %s %l             %d     %d       %d     %s\n", uproc[i].pid, state,
                    uproc[i].size, uproc[i].priority, uproc[i].cputime, uproc[i].ppid, uproc[i].name);
-   }
+	
+  }
+
 
   exit(0);
 }
