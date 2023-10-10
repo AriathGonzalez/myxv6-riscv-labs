@@ -294,7 +294,7 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-  np->prioriity = p->priority;	// HW 3: Task 3
+  np->priority = p->priority;	// HW 3: Task 3
   
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
@@ -577,23 +577,15 @@ scheduler(void)
     else {
     	p = maxpriorityproc();	// Gets the process with the max effective priority (sum of base priority + how long it has been waiting)
     	if (p) {	// Ensure that the process passed is not NULL
-    		for(p = proc; p < &proc[NPROC]; p++) {
-      			acquire(&p->lock);
-      			if(p->state == RUNNABLE) {
-				// Switch to chosen process.  It is the process's job
-				// to release its lock and then reacquire it
-				// before jumping back to us.
-				p->state = RUNNING;
-				c->proc = p;
-				swtch(&c->context, &p->context);
-
-				// Process is done running for now.
-				// It should have changed its p->state before coming back.
-        			c->proc = 0;
-      			}	
-      			release(&p->lock);
+    		acquire(&p->lock);
+    		if (p->state == RUNNABLE) {
+    			p->state = RUNNING;
+    			c->proc = p;
+    			swtch(&c->context, &p->context);
+    			
+    			c->proc = 0;
     		}
-    	
+    		release(&p->lock);
     	}
     	
     }
