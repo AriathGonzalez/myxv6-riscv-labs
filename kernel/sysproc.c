@@ -38,17 +38,30 @@ sys_wait(void)
   return wait(p);
 }
 
+// HW 4 Task 2, Modified so it does not allocate physical memory
+// removes call to growproc()
 uint64
 sys_sbrk(void)
 {
   int addr;
   int n;
+  int newsz;
+  struct proc *p;
 
   if(argint(0, &n) < 0)
     return -1;
+    
+  p = myproc();
   addr = myproc()->sz;
+  /*
   if(growproc(n) < 0)
     return -1;
+  */
+  newsz = addr + n;
+  if (newsz > TRAPFRAME)
+  	return -1;
+  p->sz = newsz;
+  
   return addr;
 }
 
