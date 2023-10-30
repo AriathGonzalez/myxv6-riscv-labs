@@ -105,6 +105,7 @@ extern uint64 sys_wait(void);
 extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_getprocs(void);
+extern uint64 sys_freepmem(void);	// HW 4 Task 1
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,6 +130,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_getprocs]   sys_getprocs,
+[SYS_freepmem]	sys_freepmem,	// HW 4 Task 1
 };
 
 void

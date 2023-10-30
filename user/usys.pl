@@ -37,3 +37,4 @@ entry("sbrk");
 entry("sleep");
 entry("uptime");
 entry("getprocs");
+entry("freepmem");	# HW 4 Task 1

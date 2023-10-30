@@ -107,3 +107,10 @@ sys_getprocs(void)
     return -1;
   return(procinfo(addr));
 }
+
+// return number of bytes of free physical memory
+uint64
+sys_freepmem(void)
+{
+    return(nfreepages() * PGSIZE);
+}

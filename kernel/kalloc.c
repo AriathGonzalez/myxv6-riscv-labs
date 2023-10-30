@@ -80,3 +80,22 @@ kalloc(void)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
 }
+
+// HW 4: Task 1, return number of free pages of physical memory
+int
+nfreepages(void)
+{
+  struct run *r;
+  int freePhysicalFrames;
+
+  freePhysicalFrames = 0;
+  acquire(&kmem.lock);
+  r = kmem.freelist;
+  while (r) {
+    freePhysicalFrames++;
+    r = r->next;
+  }
+  release(&kmem.lock);
+  
+  return(freePhysicalFrames);
+}
