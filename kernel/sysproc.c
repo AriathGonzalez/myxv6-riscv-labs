@@ -125,5 +125,6 @@ sys_getprocs(void)
 uint64
 sys_freepmem(void)
 {
+    // Multiply number of pages by 4096 to get the amount of free memory in bytes
     return(nfreepages() * PGSIZE);
 }

@@ -82,6 +82,7 @@ kalloc(void)
 }
 
 // HW 4: Task 1, return number of free pages of physical memory
+// Each element in free list represents a page
 int
 nfreepages(void)
 {

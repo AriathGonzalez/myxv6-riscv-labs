@@ -50,7 +50,82 @@ usertrap(void)
   // save user program counter.
   p->trapframe->epc = r_sepc();
   
-  if(r_scause() == 8){
+  /*
+  * Remember, Page Faults:
+  If present bit is 1, pg is present in phsical mem
+  If present bit is 0, pg is not in mem but on disk => page fault (page miss)
+  
+  // HW 4 Task 3
+  // SCAUSE register
+  // Exception Code 13: Load page fault
+  // Exception Code 15: Store/AMO page fault
+  */
+  if (r_scause() == 13 || r_scause() == 15) {
+  	uint64 pgaddr;
+  	char *mem;
+  	
+  	// stdval register holds the faulting address when a trap or exception occurs
+  	// Get faulting address and round down to page boundary
+  	pgaddr = PGROUNDDOWN(r_stdval());	
+  	
+  	// Check that faulting address is allocated in proc's virtual addr space
+  	if (pgaddr >= p->sz) {
+  		printf("p->sz %p, invalid virtual address: %p\n", p->sz, pgaddr);
+  		p->killed = 1;
+  		exit(-1);
+  	}
+  	
+  	mem = kalloc();	// allocation physical memory frame
+  	if (mem == 0) {
+  		printf("kalloc() failed\n");
+  		p->killed = 1;
+  		exit(-1);
+  	}
+  	/*
+  	void *memset(void *str, int c, size_t n)
+  	Copies the character c to the first n characters of the string pointed to
+  	by the argument str.
+  	Ex: str = 'This is string.h library function'
+  	memset(str, '$', 7);
+  	Output: $$$$$$$ string.h library function
+  	
+  	In this case, the initializes a new allocated physical memory frame 'mem' 
+  	to all zeroes. Used to set all 4096 bytes in the memory regioni to the value 0.
+  	
+  	In other words, it's used to clear the block of physical memory that is associated 
+  	w/ the faulting virtual page.
+  	
+  	*/
+  	memset(mem, 0, PGSIZE);
+  	
+  	/*
+	int
+	mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
+	// Creates translations from 'va' (virtual addr) to pa (physical addr) in 
+	// existing page table 'pagetable'
+	// Returns 0 if successful, -1 if not
+	
+	// Get starting addr 
+	// Get ending addr (which is starting addr if size = 1)
+	// For each page...
+	// Get i1 row addr (using walkpgdir)
+	// Make sure i1 row not used already
+	// Write pa in i1 and mark as valid, w/ required permissions
+	
+  	Map Virtual Page to Physical Memory
+  	Insert mapping into proc's pagetable
+  	*/
+  	if (mappages(p->pagetable, pgaddr, PGSIZE, (uint64)mem,
+  		PTE_W|PTE_X|PTE_R|PTE_U) != 0) {
+  		printf("mappages() failed\n");
+  		kfree(mem);
+  		p->killed = 1;
+  		exit(-1);	
+  		
+  	}
+  
+  }
+  else if(r_scause() == 8){
     // system call
 
     if(p->killed)
