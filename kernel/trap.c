@@ -64,9 +64,9 @@ usertrap(void)
   	uint64 pgaddr;
   	char *mem;
   	
-  	// stdval register holds the faulting address when a trap or exception occurs
+  	// stval register holds the faulting address when a trap or exception occurs
   	// Get faulting address and round down to page boundary
-  	pgaddr = PGROUNDDOWN(r_stdval());	
+  	pgaddr = PGROUNDDOWN(r_stval());	
   	
   	// Check that faulting address is allocated in proc's virtual addr space
   	if (pgaddr >= p->sz) {
