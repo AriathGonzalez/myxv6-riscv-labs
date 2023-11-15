@@ -38,3 +38,5 @@ entry("sleep");
 entry("uptime");
 entry("getprocs");
 entry("freepmem");	# HW 4 Task 1
+entry("mmap");	# HW 5 Task 1a
+entry("munmap");	

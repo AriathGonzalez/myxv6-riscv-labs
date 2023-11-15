@@ -1,3 +1,6 @@
+#include <stddef.h>    // Add this line to include size_t
+#include <sys/types.h> // Add this line to include off_t
+
 struct stat;
 struct rtcdate;
 struct pstat;
@@ -26,6 +29,9 @@ int sleep(int);
 int uptime(void);
 int getprocs(struct pstat*);
 int freepmem(void);	// HW 4 Task 1
+// HW 5 Task 1a
+void *mmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off);
+int munmap(void *addr, size_t len);
 
 // ulib.c
 int stat(const char*, struct stat*);

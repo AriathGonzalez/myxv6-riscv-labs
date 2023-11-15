@@ -173,10 +173,10 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
 
   for(a = va; a < va + npages*PGSIZE; a += PGSIZE){
     if((pte = walk(pagetable, a, 0)) == 0)
-      // panic("uvmunmap: walk");
+      //panic("uvmunmap: walk");
       continue;	// HW 4 Task 4, continue because it fine
     if((*pte & PTE_V) == 0)
-      // panic("uvmunmap: not mapped");
+      //panic("uvmunmap: not mapped");
       continue;	// HW 4 Task 4
     if(PTE_FLAGS(*pte) == PTE_V)
       panic("uvmunmap: not a leaf");
@@ -309,10 +309,10 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
-      // panic("uvmcopy: pte should exist");
+      //panic("uvmcopy: pte should exist");
       continue;	// HW 4 Task 4
     if((*pte & PTE_V) == 0)
-      // panic("uvmcopy: page not present");
+      //panic("uvmcopy: page not present");
       continue;	// HW 4 Task 4
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
@@ -436,3 +436,28 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+// Allocate page table pages for PTEs if needed but leave valid bits unchanged
+int
+mapvpages(pagetable_t pagetable, uint64 va, uint64 size)
+{
+  uint64 a, last;
+  pte_t *pte;
+
+  if(size == 0)
+    panic("mappages: size");
+
+  a = PGROUNDDOWN(va);
+  last = PGROUNDDOWN(va + size - 1);
+  for(;;){
+    if((pte = walk(pagetable, a, 1)) == 0)
+      return -1;
+    if(*pte & PTE_V)
+      panic("mappages: remap");
+    if(a == last)
+      break;
+    a += PGSIZE;
+  }
+  return 0;
+}
+

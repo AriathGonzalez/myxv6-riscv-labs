@@ -116,7 +116,7 @@ usertrap(void)
   	Insert mapping into proc's pagetable
   	*/
   	if (mappages(p->pagetable, pgaddr, PGSIZE, (uint64)mem,
-  		PTE_W|PTE_X|PTE_R|PTE_U) != 0) {
+  		PTE_R|PTE_W|PTE_X|PTE_U) != 0) {
   		printf("mappages() failed\n");
   		kfree(mem);
   		p->killed = 1;
