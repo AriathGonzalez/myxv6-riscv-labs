@@ -63,6 +63,10 @@ usertrap(void)
   if (r_scause() == 13 || r_scause() == 15) {
   	uint64 pgaddr;
   	char *mem;
+  	// HW 5 Task 1b -----------------
+  	int i;
+  	int validaddr;
+  	struct mmr *pmmr;
   	
   	// stval register holds the faulting address when a trap or exception occurs
   	// Get faulting address and round down to page boundary
@@ -70,10 +74,31 @@ usertrap(void)
   	
   	// Check that faulting address is allocated in proc's virtual addr space
   	if (pgaddr >= p->sz) {
-  		printf("p->sz %p, invalid virtual address: %p\n", p->sz, pgaddr);
-  		p->killed = 1;
-  		exit(-1);
+  		// HW 5 Task 1b ------------------------
+  		pmmr = p->mmr;
+  		validaddr = 0;
+  		for (i = 0; i < MAX_MMR; i++) {
+  			if (pmmr[i].valid && pgaddr >= pmmr[i].addr && 
+  				pgaddr < pmmr[i].addr + pmmr[i].length) {
+  				// pgaddr fails in valild mapped region, now check permission
+  				if (((r_scause() == 13) && !(pmmr[i].prot & PTE_R)) ||
+  				   ((r_scause() == 15) && !(pmmr[i].prot & PTE_W))) {
+  				   	printf("usertrap(): permission: %p\n", pgaddr);
+  				   	p->killed = 1;
+  				   	exit(-1);
+  				}
+  				validaddr = 1;
+  				break;
+  			}
+  			if (!validaddr) {
+  				printf("usertrap(): invalid virtual address: %p\n", pgaddr);
+  				p->killed = 1;
+  				exit(-1);
+  			}
+  		}
+  		
   	}
+  	// HW 5 Task 1b -----------------------
   	
   	mem = kalloc();	// allocation physical memory frame
   	if (mem == 0) {

@@ -11,6 +11,9 @@ struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
 
+struct mmr_list mmr_list[NPROC*MAX_MMR];
+struct spinlock listid_lock;
+
 struct proc *initproc;
 
 int nextpid = 1;
@@ -26,9 +29,6 @@ extern char trampoline[]; // trampoline.S
 // memory model when using p->parent.
 // must be acquired before any p->lock.
 struct spinlock wait_lock;
-
-struct mmr_list mmr_list[NPROC*MAX_MMR];
-struct spinlock listid_lock;
 
 // Allocate a page for each process's kernel stack.
 // Map it high in memory, followed by an invalid
@@ -234,8 +234,6 @@ userinit(void)
   p = allocproc();
   initproc = p;
   
-  p->cur_max = MAXVA - 2 * PGSIZE;
-  
   // allocate one user page and copy init's instructions
   // and data into it.
   uvminit(p->pagetable, initcode, sizeof(initcode));
@@ -249,6 +247,7 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+  p->cur_max = MAXVA - 2 * PGSIZE;
 
   release(&p->lock);
 }

@@ -111,10 +111,6 @@ struct mmr {
 // Per-process state
 struct proc {
   struct spinlock lock;
-  struct mmr mmr[MAX_MMR];     // Array of memory-mapped regions
-  uint64 cur_max;                             // Max address of free virtual memory, 
-                                                            // initialize to MAXVA-2*PGSIZE
-
 
   // p->lock must be held when using these:
   enum procstate state;        // Process state
@@ -135,4 +131,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  struct mmr mmr[MAX_MMR];     // Array of memory-mapped regions
+  uint64 cur_max;              // Max address of free virtual memory, 
+                               // initialize to MAXVA-2*PGSI
 };
