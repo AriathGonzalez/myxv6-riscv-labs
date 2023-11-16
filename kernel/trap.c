@@ -72,15 +72,17 @@ usertrap(void)
   	// Get faulting address and round down to page boundary
   	pgaddr = PGROUNDDOWN(r_stval());	
   	
-  	// Check that faulting address is allocated in proc's virtual addr space
+  	// Check if faulting address is beyond proc's valid virtual addr space
   	if (pgaddr >= p->sz) {
   		// HW 5 Task 1b ------------------------
   		pmmr = p->mmr;
   		validaddr = 0;
+  		// Loop through all mapped memory regions in proc
   		for (i = 0; i < MAX_MMR; i++) {
+  			// Checks if faulting address falls w/in a memory mapped region
   			if (pmmr[i].valid && pgaddr >= pmmr[i].addr && 
   				pgaddr < pmmr[i].addr + pmmr[i].length) {
-  				// pgaddr fails in valild mapped region, now check permission
+  				// pgaddr falls in valid mapped region, now check permission
   				if (((r_scause() == 13) && !(pmmr[i].prot & PTE_R)) ||
   				   ((r_scause() == 15) && !(pmmr[i].prot & PTE_W))) {
   				   	printf("usertrap(): permission: %p\n", pgaddr);
