@@ -24,3 +24,7 @@
 #define SYS_freepmem  23
 #define SYS_mmap   24
 #define SYS_munmap 25
+#define SYS_sem_init 26
+#define SYS_sem_destroy 27
+#define SYS_sem_wait 28
+#define SYS_sem_post 29

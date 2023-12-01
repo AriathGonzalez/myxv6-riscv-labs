@@ -29,6 +29,11 @@ int freepmem(void);	// HW 4 Task 1
 // HW 5 Task 1a
 void *mmap(void*, uint64 length, int prot, int flags, int fd, int offset);
 int munmap(void*, uint64 length);
+// HW 6 Task 1
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_destroy(sem_t *sem);
+int sem_wait(sem_t *sem);
+int sem_post(sem_t *sem);
 
 // ulib.c
 int stat(const char*, struct stat*);

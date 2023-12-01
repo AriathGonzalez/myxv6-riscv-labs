@@ -40,3 +40,8 @@ entry("getprocs");
 entry("freepmem");	# HW 4 Task 1
 entry("mmap");	# HW 5 Task 1a
 entry("munmap");	
+# HW 6 Task 1
+entry("sem_init");
+entry("sem_destroy");
+entry("sem_wait");
+entry("sem_post");
