@@ -15,7 +15,7 @@ void seminit(void)
 
 // Return the idx of an unused location in the semaphore table
 // or returns -1 if there is no empty location.
-int semmalloc(void)
+int semalloc(void)
 {
 	acquire(&semtable.lock);
 	for (int i = 0; i < NSEM; i++) {
@@ -36,5 +36,5 @@ void semdealloc(int idx)
 	acquire(&semtable.sem[idx].lock);
 	if (idx >= 0 && idx < NSEM)
 		semtable.sem[idx].valid = 0;
-	release(&semtable.sem[i].lock);
+	release(&semtable.sem[idx].lock);
 }
