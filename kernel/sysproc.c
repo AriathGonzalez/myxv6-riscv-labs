@@ -159,7 +159,7 @@ sys_sem_init(void)
 	
 	// If 'pshared' is 1, this means shared semaphores btwn procs
 	if (pshared != 1)
-		return -1
+		return -1;
 	
 	// Get idx of unused location
 	int semIdx = semalloc();
@@ -200,7 +200,7 @@ sys_sem_destroy(void)
 	
 	// If semaphore is not valid return -1
 	acquire(&semtable.sem[semIdx].lock);
-	if (semtablemsem[semIdx].valid != 1) {
+	if (semtable.sem[semIdx].valid != 1) {
 		release(&semtable.sem[semIdx].lock);
 		return -1;
 	}
@@ -261,7 +261,7 @@ sys_sem_post(void)
 		return -1;
 	
 	// Use copyin to get semaphore idx
-	struct prod *p = myproc();
+	struct proc *p = myproc();
 	int semIdx;
 	if (copyin(p->pagetable, (char*)&semIdx, semaddr, sizeof(int)) < 0)
 		return -1;
@@ -269,20 +269,12 @@ sys_sem_post(void)
 	// If semaphore is not valid, return -1
 	acquire(&semtable.sem[semIdx].lock);
 	if (semtable.sem[semIdx].valid != 1){
-		releasea(&semtable.sem[semIdx].lock);
+		release(&semtable.sem[semIdx].lock);
 		return -1;
 	}
 	
 	semtable.sem[semIdx].count += 1;
 	wakeup((void*)&semtable.sem[semIdx]);
 	release(&semtable.sem[semIdx].lock);
-	return 0;
-	
-	if (argptr(0, (void*)&sem, sizeof(sem)) < 0)
-		return -1;
-	
-	if (sem_post(sem) < 0)
-		return -1;
-	
 	return 0;
 }

@@ -20,6 +20,8 @@ main()
     kvminit();       // create kernel page table
     kvminithart();   // turn on paging
     procinit();      // process table
+    // HW 6 Task 2
+    seminit();
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
     plicinit();      // set up interrupt controller
@@ -30,8 +32,6 @@ main()
     virtio_disk_init(); // emulated hard disk
     userinit();      // first user process
     mmrlistinit();
-    // HW 6 Task 2
-    seminit();
     __sync_synchronize();
     started = 1;
   } else {

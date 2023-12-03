@@ -4,6 +4,7 @@
 
 #define BSIZE 10
 #define MAX 10
+#define NULL 0
 
 typedef struct {
     int buf[BSIZE];

@@ -36,5 +36,5 @@ void semdealloc(int idx)
 	acquire(&semtable.sem[idx].lock);
 	if (idx >= 0 && idx < NSEM)
 		semtable.sem[idx].valid = 0;
-	release(&semtable.sem[idx].lock);
+	release(&semtable.sem[i].lock);
 }
