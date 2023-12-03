@@ -33,8 +33,8 @@ int semmalloc(void)
 // semaphore table. [Concurrency control required]
 void semdealloc(int idx)
 {
-	acquire(&semtable.lock);
+	acquire(&semtable.sem[idx].lock);
 	if (idx >= 0 && idx < NSEM)
 		semtable.sem[idx].valid = 0;
-	release(&semtable.lock);
+	release(&semtable.sem[idx].lock);
 }
