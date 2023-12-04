@@ -152,28 +152,34 @@ usertrap(void)
   	}
   	
   	// HW 5 Extra Credit
+  	struct mmr_list *mmr_list;
+  	struct mmr_node *mmr_node;
+  	
   	pmmr = p->mmr;
-  	// Add new mapping for the allocated physical page into the page tables for all processes in the family
-      for(int i = 0; i < MAX_MMR; i++) {
-        if(pmmr[i].valid && pgaddr >= pmmr[i].addr && pgaddr < pmmr[i].addr + pmmr[i].length) {
-	  struct mmr_list *mmr_list = get_mmr_list(pmmr->mmr_family.listid);
-	  acquire(&mmr_list[pmmr[i].mmr_family.listid].lock);
-	  struct mmr_node *nf = pmmr[i].mmr_family.next;
-          while (nf != &(pmmr[i].mmr_family) ) {
-            struct proc *family_proc = nf->proc;
-            if (family_proc != p) {
-              // Duplicate the new mapping for other processes in the family
-              if (mappages(family_proc->pagetable, pgaddr, PGSIZE, (uint64)mem, PTE_W | PTE_X | PTE_R | PTE_U) < 0) {
-                kfree(mem);
-                p->killed = 1;
-                exit(-1);
-              }
-            }
-            nf = nf->next;
-          }
-	  release(&mmr_list[pmmr[i].mmr_family.listid].lock);
-        }
-      }
+  	
+  	for (int i = 0; i < MAX_MMR; i++) {
+  		if (pmmr[i].valid && pgaddr >= pmmr[i].addr && 
+  				pgaddr < pmmr[i].addr + pmmr[i].length) {
+  			mmr_list = get_mmr_list(pmmr->mmr_family.listid);
+  			acquire(&mmr_list->lock);
+  			mmr_node = pmmr[i].mmr_family.next;
+		  	while (mmr_node != &pmmr->mmr_family) {
+		  		if (mmr_node->proc != p) {
+			  		if (mappages(mmr_node->proc->pagetable, pgaddr, PGSIZE, (uint64)mem,
+				  		PTE_R|PTE_W|PTE_X|PTE_U) != 0) {
+				  		printf("mappages() failed\n");
+				  		kfree(mem);
+				  		p->killed = 1;
+				  		exit(-1);	
+			  		
+			  		}
+			  	}
+		  		mmr_node = mmr_node->next;
+
+		  	}
+		        release(&mmr_list->lock);
+		}
+	}
   
   }
   else if(r_scause() == 8){

@@ -142,6 +142,7 @@ Initializing a semaphore that has already been initialized results in undefined 
 
 Returns 0 on success; on error -1
 */
+
 uint64
 sys_sem_init(void)
 {
